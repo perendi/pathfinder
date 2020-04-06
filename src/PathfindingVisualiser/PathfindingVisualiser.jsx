@@ -14,6 +14,7 @@ export default class PathfindingVisualiser extends Component {
     super();
     this.state = {
       grid: [],
+      mouseIsPressed: false,
     };
   }
 
@@ -22,20 +23,20 @@ export default class PathfindingVisualiser extends Component {
     this.setState({ grid });
   }
 
-  // handleMouseDown(row, col) {
-  //   const newGrid = this.getNewGridWithWallToggled(this.state.grid, row, col);
-  //   this.setState({ grid: newGrid, mouseIsPressed: true });
-  // }
+  handleMouseDown(row, col) {
+    const newGrid = getNewGridWithWallToggled(this.state.grid, row, col);
+    this.setState({ grid: newGrid, mouseIsPressed: true });
+  }
 
-  // handleMouseEnter(row, col) {
-  //   if (!this.state.mouseIsPressed) return;
-  //   const newGrid = this.getNewGridWithWallToggled(this.state.grid, row, col);
-  //   this.setState({ grid: newGrid });
-  // }
+  handleMouseEnter(row, col) {
+    if (!this.state.mouseIsPressed) return;
+    const newGrid = getNewGridWithWallToggled(this.state.grid, row, col);
+    this.setState({ grid: newGrid });
+  }
 
-  // handleMouseUp() {
-  //   this.setState({ mouseIsPressed: false });
-  // }
+  handleMouseUp() {
+    this.setState({ mouseIsPressed: false });
+  }
 
   animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder) {
     for (let i = 0; i <= visitedNodesInOrder.length; i++) {
@@ -48,7 +49,7 @@ export default class PathfindingVisualiser extends Component {
       setTimeout(() => {
         const node = visitedNodesInOrder[i];
         document.getElementById(`node-${node.row}-${node.col}`).className =
-          "node node-visited";
+          "node node-visited"; //For efficiency
       }, 10 * i);
     }
   }
@@ -58,7 +59,7 @@ export default class PathfindingVisualiser extends Component {
       setTimeout(() => {
         const node = nodesInShortestPathOrder[i];
         document.getElementById(`node-${node.row}-${node.col}`).className =
-          "node node-shortest-path";
+          "node node-shortest-path"; //For efficiency
       }, 50 * i);
     }
   }
@@ -73,7 +74,7 @@ export default class PathfindingVisualiser extends Component {
   }
 
   render() {
-    const { grid } = this.state;
+    const { grid, mouseIsPressed } = this.state;
 
     return (
       <>
@@ -93,12 +94,13 @@ export default class PathfindingVisualiser extends Component {
                       col={col}
                       isStart={isStart}
                       isFinish={isFinish}
-                      //isVisited={isVisited}
                       isWall={isWall}
-                      //mouseIsPressed={mouseIsPressed}
-                      //onMouseDown={(row, col) => this.handleMouseDown(row, col)}
-                      //onMouseEnter={(row, col) => this.handleMouseEnter(row, col)}
-                      //onMouseUp={() => this.handleMouseUp()}
+                      mouseIsPressed={mouseIsPressed}
+                      onMouseDown={(row, col) => this.handleMouseDown(row, col)}
+                      onMouseEnter={(row, col) =>
+                        this.handleMouseEnter(row, col)
+                      }
+                      onMouseUp={() => this.handleMouseUp()}
                     ></Node>
                   );
                 })}

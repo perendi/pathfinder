@@ -5,14 +5,11 @@ export function dijkstra(grid, startNode, finishNode) {
   while (!!unvisitedNodes.length) {
     sortNodesByDistance(unvisitedNodes);
     const closestNode = unvisitedNodes.shift();
-    // HANDLE WALLS LATER
-    // while(currentNode.status == "wall" && unvisitedNodes.length){
-    //     currentNode = getClosestNode(nodes, unvisitedNodes);
-    // }
-    // HANDE IMPOSSIBLE LATER
-    // if(closestNode.distance === Infinity) return false;
-    // ANIMATE LATER
-    // nodesToAnimate.push(closestNode;)
+    //Wall
+    if (closestNode.isWall) continue;
+    //Handling the impossible case, when the distance to the closest
+    //node is infinity
+    if (closestNode.distance === Infinity) return visitedNodesInOrder;
     closestNode.isVisited = true;
     visitedNodesInOrder.push(closestNode);
     if (closestNode === finishNode) return visitedNodesInOrder;
