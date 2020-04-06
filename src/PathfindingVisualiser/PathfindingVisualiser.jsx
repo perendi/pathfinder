@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import Node from "./Node/Node";
-import { dijkstra, getNodesInShortestPathOrder } from '../Algorithms/dijkstra';
+import { dijkstra, getNodesInShortestPathOrder } from "../Algorithms/dijkstra";
 
 import "./PathfindingVisualiser.css";
 
@@ -21,7 +21,7 @@ export default class PathfindingVisualiser extends Component {
     const grid = this.getInitialGrid();
     this.setState({ grid });
   }
-  
+
   // handleMouseDown(row, col) {
   //   const newGrid = this.getNewGridWithWallToggled(this.state.grid, row, col);
   //   this.setState({ grid: newGrid, mouseIsPressed: true });
@@ -38,16 +38,17 @@ export default class PathfindingVisualiser extends Component {
   // }
 
   animateDijkstra(visitedNodesInOrder) {
-    for (const node of visitedNodesInOrder) {
-      const newGrid = this.state.grid.slice();
-      const newNode = {
-        ...node,
-        isVisited: true,
-      };
-      newGrid[node.row][node.col] = newNode;
+    for (let i = 0; i < visitedNodesInOrder.length; i++) {
       setTimeout(() => {
+        const node = visitedNodesInOrder[i];
+        const newGrid = this.state.grid.slice();
+        const newNode = {
+          ...node,
+          isVisited: true,
+        };
+        newGrid[node.row][node.col] = newNode;
         this.setState({ grid: newGrid });
-      }, 100);
+      }, 20 * i);
     }
   }
 
@@ -61,35 +62,40 @@ export default class PathfindingVisualiser extends Component {
   }
 
   render() {
-    const { grid} = this.state;
+    const { grid } = this.state;
 
     return (
-      <button onClick={()=>this.visualiseDijkstra()}>Visualise Dijkstra's Algorithm</button>
-      <div className="grid">
-        {nodes.map((row, rowIdx) => {
-          return (
-            <div key={rowIdx}>
-              {row.map((node, nodeIdx) => {
-                const {row, col, isStart, isFinish, isWall } = node;
-                return (
-                  <Node
-                    key={nodeIdx}
-                    row={col}
-                    col={col}
-                    isStart={isStart}
-                    isFinish={isFinish}
-                    isWall={isWall}
-                    mouseIsPressed={mouseIsPressed}
-                    onMouseDown={(row, col) => this.handleMouseDown(row, col)}
-                    onMouseEnter={(row, col) => this.handleMouseEnter(row, col)}
-                    onMouseUp={() => this.handleMouseUp()}
-                  ></Node>
-                );
-              })}
-            </div>
-          );
-        })}
-      </div>
+      <>
+        <button onClick={() => this.visualiseDijkstra()}>
+          Visualise Dijkstra's Algorithm
+        </button>
+        <div className="grid">
+          {grid.map((row, rowIdx) => {
+            return (
+              <div key={rowIdx}>
+                {row.map((node, nodeIdx) => {
+                  const { isStart, isFinish, isVisited } = node;
+                  return (
+                    <Node
+                      key={nodeIdx}
+                      //row={col}
+                      //col={col}
+                      isStart={isStart}
+                      isFinish={isFinish}
+                      isVisited={isVisited}
+                      //isWall={isWall}
+                      //mouseIsPressed={mouseIsPressed}
+                      //onMouseDown={(row, col) => this.handleMouseDown(row, col)}
+                      //onMouseEnter={(row, col) => this.handleMouseEnter(row, col)}
+                      //onMouseUp={() => this.handleMouseUp()}
+                    ></Node>
+                  );
+                })}
+              </div>
+            );
+          })}
+        </div>
+      </>
     );
   }
 }
