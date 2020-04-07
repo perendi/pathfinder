@@ -4,10 +4,13 @@ import { dijkstra, getNodesInShortestPathOrder } from "../Algorithms/dijkstra";
 
 import "./PathfindingVisualiser.css";
 
-var startNodeRow = Math.floor(Math.random() * 20);
-var startNodeCol = Math.floor(Math.random() * 50);
-var finishNodeRow = Math.floor(Math.random() * 20);
-var finishNodeCol = Math.floor(Math.random() * 50);
+const ROWS = 20;
+const COLS = 50;
+
+var startNodeRow = Math.floor(Math.random() * ROWS);
+var startNodeCol = Math.floor(Math.random() * COLS);
+var finishNodeRow = Math.floor(Math.random() * ROWS);
+var finishNodeCol = Math.floor(Math.random() * COLS);
 var dragStartNode = false;
 var dragFinishNode = false;
 
@@ -145,10 +148,10 @@ export default class PathfindingVisualiser extends Component {
 }
 const getInitialGrid = () => {
   const grid = [];
-  for (let row = 0; row < 20; row++) {
+  for (let row = 0; row < ROWS; row++) {
     const currentRow = [];
 
-    for (let col = 0; col < 50; col++) {
+    for (let col = 0; col < COLS; col++) {
       currentRow.push(createNode(col, row));
     }
 
