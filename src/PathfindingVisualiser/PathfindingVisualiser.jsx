@@ -4,10 +4,12 @@ import { dijkstra, getNodesInShortestPathOrder } from "../Algorithms/dijkstra";
 
 import "./PathfindingVisualiser.css";
 
-const START_NODE_ROW = 10;
-const START_NODE_COL = 15;
-const FINISH_NODE_ROW = 15;
-const FINISH_NODE_COL = 30;
+var startNodeRow = Math.floor(Math.random() * 20);
+var startNodeCol = Math.floor(Math.random() * 50);
+var finishNodeRow = Math.floor(Math.random() * 20);
+var finishNodeCol = Math.floor(Math.random() * 50);
+var dragStartNode = false;
+var dragFinishNode = false;
 
 export default class PathfindingVisualiser extends Component {
   constructor() {
@@ -24,17 +26,41 @@ export default class PathfindingVisualiser extends Component {
   }
 
   handleMouseDown(row, col) {
-    const newGrid = getNewGridWithWallToggled(this.state.grid, row, col);
-    this.setState({ grid: newGrid, mouseIsPressed: true });
+    if (this.state.grid[row][col].isStart) {
+      this.setState({ mouseIsPressed: true });
+      this.state.grid[row][col].isStart = false;
+      dragStartNode = true;
+    } else if (this.state.grid[row][col].isFinish) {
+      this.setState({ mouseIsPressed: true });
+      this.state.grid[row][col].isFinish = false;
+      dragFinishNode = true;
+    } else {
+      const newGrid = getNewGridWithWallToggled(this.state.grid, row, col);
+      this.setState({ grid: newGrid, mouseIsPressed: true });
+    }
   }
 
   handleMouseEnter(row, col) {
     if (!this.state.mouseIsPressed) return;
+    if (dragStartNode || dragFinishNode) {
+      return;
+    }
     const newGrid = getNewGridWithWallToggled(this.state.grid, row, col);
     this.setState({ grid: newGrid });
   }
 
-  handleMouseUp() {
+  handleMouseUp(row, col) {
+    if (dragStartNode) {
+      this.state.grid[row][col].isStart = true;
+      startNodeRow = row;
+      startNodeCol = col;
+      dragStartNode = false;
+    } else if (dragFinishNode) {
+      this.state.grid[row][col].isFinish = true;
+      finishNodeRow = row;
+      finishNodeCol = col;
+      dragFinishNode = false;
+    }
     this.setState({ mouseIsPressed: false });
   }
 
@@ -60,17 +86,21 @@ export default class PathfindingVisualiser extends Component {
         const node = nodesInShortestPathOrder[i];
         document.getElementById(`node-${node.row}-${node.col}`).className =
           "node node-shortest-path"; //For efficiency
-      }, 50 * i);
+      }, 30 * i);
     }
   }
 
   visualiseDijkstra() {
     const { grid } = this.state;
-    const startNode = grid[START_NODE_ROW][START_NODE_COL];
-    const finishNode = grid[FINISH_NODE_ROW][FINISH_NODE_COL];
+    const startNode = grid[startNodeRow][startNodeCol];
+    const finishNode = grid[finishNodeRow][finishNodeCol];
     const visitedNodesInOrder = dijkstra(grid, startNode, finishNode);
     const nodesInShortestPathOrder = getNodesInShortestPathOrder(finishNode);
     this.animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder);
+  }
+
+  reloadPage() {
+    window.location.reload();
   }
 
   render() {
@@ -78,6 +108,7 @@ export default class PathfindingVisualiser extends Component {
 
     return (
       <>
+        <button onClick={() => this.reloadPage()}>Reset</button>
         <button onClick={() => this.visualiseDijkstra()}>
           Visualise Dijkstra's Algorithm
         </button>
@@ -100,7 +131,7 @@ export default class PathfindingVisualiser extends Component {
                       onMouseEnter={(row, col) =>
                         this.handleMouseEnter(row, col)
                       }
-                      onMouseUp={() => this.handleMouseUp()}
+                      onMouseUp={(row, col) => this.handleMouseUp(row, col)}
                     ></Node>
                   );
                 })}
@@ -130,8 +161,8 @@ const createNode = (col, row) => {
   return {
     col,
     row,
-    isStart: row === START_NODE_ROW && col === START_NODE_COL,
-    isFinish: row === FINISH_NODE_ROW && col === FINISH_NODE_COL,
+    isStart: row === startNodeRow && col === startNodeCol,
+    isFinish: row === finishNodeRow && col === finishNodeCol,
     distance: Infinity,
     isVisited: false,
     isWall: false,
