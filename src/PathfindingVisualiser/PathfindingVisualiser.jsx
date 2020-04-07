@@ -29,13 +29,14 @@ export default class PathfindingVisualiser extends Component {
   }
 
   handleMouseDown(row, col) {
+    const grid = this.state.grid;
     if (this.state.grid[row][col].isStart) {
       this.setState({ mouseIsPressed: true });
-      this.state.grid[row][col].isStart = false;
+      grid[row][col].isStart = false;
       dragStartNode = true;
     } else if (this.state.grid[row][col].isFinish) {
       this.setState({ mouseIsPressed: true });
-      this.state.grid[row][col].isFinish = false;
+      grid[row][col].isFinish = false;
       dragFinishNode = true;
     } else {
       const newGrid = getNewGridWithWallToggled(this.state.grid, row, col);
@@ -53,13 +54,14 @@ export default class PathfindingVisualiser extends Component {
   }
 
   handleMouseUp(row, col) {
+    const grid = this.state.grid;
     if (dragStartNode) {
-      this.state.grid[row][col].isStart = true;
+      grid[row][col].isStart = true;
       startNodeRow = row;
       startNodeCol = col;
       dragStartNode = false;
     } else if (dragFinishNode) {
-      this.state.grid[row][col].isFinish = true;
+      grid[row][col].isFinish = true;
       finishNodeRow = row;
       finishNodeCol = col;
       dragFinishNode = false;
